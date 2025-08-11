@@ -32,7 +32,7 @@
 <meta property="og:image" content="c:\Users\ASUS\Documents\%E7%AC%94%E8%AE%B0\19113723-21463cd0f94f455480d282ac1b38138d.png">
 <meta property="og:image" content="c:\Users\ASUS\Documents\%E7%AC%94%E8%AE%B0\23111716-dc0f4c90540c48569dd18f835b2d8af9.png">
 <meta property="article:published_time" content="2025-08-02T08:19:38.980Z">
-<meta property="article:modified_time" content="2025-08-02T08:39:40.269Z">
+<meta property="article:modified_time" content="2025-08-09T04:32:32.321Z">
 <meta property="article:author" content="gb">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="c:\Users\ASUS\Documents\%E7%AC%94%E8%AE%B0\19113723-21463cd0f94f455480d282ac1b38138d.png">
@@ -197,10 +197,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2025-08-02 16:19:38 / 修改时间：16:39:40" itemprop="dateCreated datePublished" datetime="2025-08-02T16:19:38+08:00">2025-08-02</time>
+              <time title="创建时间：2025-08-02 16:19:38" itemprop="dateCreated datePublished" datetime="2025-08-02T16:19:38+08:00">2025-08-02</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-08-09 12:32:32" itemprop="dateModified" datetime="2025-08-09T12:32:32+08:00">2025-08-09</time>
+              </span>
 
           <br>
             <span class="post-meta-item" title="本文字数">
@@ -208,14 +214,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>12k</span>
+              <span>19k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>11 分钟</span>
+              <span>17 分钟</span>
             </span>
 
         </div>
@@ -477,7 +483,7 @@
 <td>如果当前正在执行中断处理程序，则返回非0；否则返回0</td>
 </tr>
 </tbody></table>
-<h2 id="下半部分和推后执行的工作"><a href="#下半部分和推后执行的工作" class="headerlink" title="下半部分和推后执行的工作"></a>下半部分和推后执行的工作</h2><h3 id="1-中断下半部处理"><a href="#1-中断下半部处理" class="headerlink" title="1. 中断下半部处理"></a><strong>1. 中断下半部处理</strong></h3><p>那么对于一个中断，如何划分上下两部分呢？哪些处理放在上半部，哪些处理放在下半部？</p>
+<h2 id="第八章-下半部分和推后执行的工作"><a href="#第八章-下半部分和推后执行的工作" class="headerlink" title="第八章 下半部分和推后执行的工作"></a>第八章 下半部分和推后执行的工作</h2><h3 id="1-中断下半部处理"><a href="#1-中断下半部处理" class="headerlink" title="1. 中断下半部处理"></a><strong>1. 中断下半部处理</strong></h3><p>那么对于一个中断，如何划分上下两部分呢？哪些处理放在上半部，哪些处理放在下半部？</p>
 <p>这里有一些经验可供借鉴：</p>
 <ol>
 <li>如果一个任务对时间十分敏感，将其放在上半部</li>
@@ -568,11 +574,355 @@
 <h4 id="2-3-工作队列"><a href="#2-3-工作队列" class="headerlink" title="2.3 工作队列"></a>2.3 工作队列</h4><p>工作队列子系统是一个用于创建内核线程的接口，通过它可以创建一个工作者线程来专门处理中断的下半部工作，负责执行由内核其他部分排到队列里的任务。工作队列提供了一个缺省的工作者线程来处理这些工作。叫做events&#x2F;n（n对应处理器号）</p>
 <p>工作队列和tasklet不一样，不是基于软中断来实现的。</p>
 <p>工作队列主要用到下面三个结构体，弄懂了这三个结构体的关系！！</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 在 include/linux/workqueue.h 文件中定义 */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">work_struct</span> &#123;</span></span><br><span class="line">    <span class="type">atomic_long_t</span> data;             <span class="comment">/* 这个并不是处理函数的参数，而是表示此work是否pending等状态的flag */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> WORK_STRUCT_PENDING 0        <span class="comment">/* T if work item pending execution */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> WORK_STRUCT_FLAG_MASK (3UL)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> WORK_STRUCT_WQ_DATA_MASK (~WORK_STRUCT_FLAG_MASK)</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">entry</span>;</span>         <span class="comment">/* 中断下半部处理函数的链表 */</span></span><br><span class="line">    <span class="type">work_func_t</span> func;               <span class="comment">/* 处理中断下半部工作的函数 */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_LOCKDEP</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">lockdep_map</span> <span class="title">lockdep_map</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 在 kernel/workqueue.c文件中定义</span></span><br><span class="line"><span class="comment"> * 每个工作者线程对应一个 cpu_workqueue_struct ，其中包含要处理的工作的链表</span></span><br><span class="line"><span class="comment"> * (即 work_struct 的链表，当此链表不空时，唤醒工作者线程来进行处理)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * The per-CPU workqueue (if single thread, we always use the first</span></span><br><span class="line"><span class="comment"> * possible cpu).</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cpu_workqueue_struct</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="type">spinlock_t</span> lock;                   <span class="comment">/* 锁保护这种结构 */</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">worklist</span>;</span>         <span class="comment">/* 工作队列头节点 */</span></span><br><span class="line">    <span class="type">wait_queue_head_t</span> more_work;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">work_struct</span> *<span class="title">current_work</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">workqueue_struct</span> *<span class="title">wq</span>;</span>       <span class="comment">/* 关联工作队列结构 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">thread</span>;</span>        <span class="comment">/* 关联线程 */</span></span><br><span class="line">&#125; ____cacheline_aligned;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 也是在 kernel/workqueue.c 文件中定义的</span></span><br><span class="line"><span class="comment"> * 每个 workqueue_struct 表示一种工作者类型，系统默认的就是 events 工作者类型</span></span><br><span class="line"><span class="comment"> * 每个工作者类型一般对应n个工作者线程，n就是处理器的个数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * The externally visible workqueue abstraction is an array of</span></span><br><span class="line"><span class="comment"> * per-CPU workqueues:</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">workqueue_struct</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">cpu_workqueue_struct</span> *<span class="title">cpu_wq</span>;</span>  <span class="comment">/* 工作者线程 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">list</span>;</span></span><br><span class="line">    <span class="type">const</span> <span class="type">char</span> *name;</span><br><span class="line">    <span class="type">int</span> singlethread;</span><br><span class="line">    <span class="type">int</span> freezeable;        <span class="comment">/* Freeze threads during suspend */</span></span><br><span class="line">    <span class="type">int</span> rt;</span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_LOCKDEP</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">lockdep_map</span> <span class="title">lockdep_map</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/* 在 include/linux/workqueue.h 文件中定义 */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">work_struct</span> &#123;</span></span><br><span class="line">    <span class="type">atomic_long_t</span> data;             <span class="comment">/* 这个并不是处理函数的参数，而是表示此work是否pending等状态的flag */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> WORK_STRUCT_PENDING 0        <span class="comment">/* T if work item pending execution */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> WORK_STRUCT_FLAG_MASK (3UL)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> WORK_STRUCT_WQ_DATA_MASK (~WORK_STRUCT_FLAG_MASK)</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">entry</span>;</span>         <span class="comment">/* 中断下半部处理函数的链表 */</span></span><br><span class="line">    <span class="type">work_func_t</span> func;               <span class="comment">/* 处理中断下半部工作的函数 */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_LOCKDEP</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">lockdep_map</span> <span class="title">lockdep_map</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 在 kernel/workqueue.c文件中定义</span></span><br><span class="line"><span class="comment"> * 每个工作者线程对应一个 cpu_workqueue_struct ，其中包含要处理的工作的链表</span></span><br><span class="line"><span class="comment"> * (即 work_struct 的链表，当此链表不空时，唤醒工作者线程来进行处理)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * The per-CPU workqueue (if single thread, we always use the first</span></span><br><span class="line"><span class="comment"> * possible cpu).</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cpu_workqueue_struct</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="type">spinlock_t</span> lock;                   <span class="comment">/* 锁保护这种结构 */</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">worklist</span>;</span>         <span class="comment">/* 工作队列头节点 */</span></span><br><span class="line">    <span class="type">wait_queue_head_t</span> more_work;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">work_struct</span> *<span class="title">current_work</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">workqueue_struct</span> *<span class="title">wq</span>;</span>       <span class="comment">/* 关联工作队列结构 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">thread</span>;</span>        <span class="comment">/* 关联线程 */</span></span><br><span class="line">&#125; ____cacheline_aligned;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 也是在 kernel/workqueue.c 文件中定义的</span></span><br><span class="line"><span class="comment"> * 每个 workqueue_struct 表示一种工作者类型，系统默认的就是 events 工作者类型</span></span><br><span class="line"><span class="comment"> * 每个工作者类型一般对应n个工作者线程，n就是处理器的个数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * The externally visible workqueue abstraction is an array of</span></span><br><span class="line"><span class="comment"> * per-CPU workqueues:</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">workqueue_struct</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">cpu_workqueue_struct</span> *<span class="title">cpu_wq</span>;</span>  <span class="comment">/* 工作者线程 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">list</span>;</span></span><br><span class="line">    <span class="type">const</span> <span class="type">char</span> *name;</span><br><span class="line">    <span class="type">int</span> singlethread;</span><br><span class="line">    <span class="type">int</span> freezeable;        <span class="comment">/* Freeze threads during suspend */</span></span><br><span class="line">    <span class="type">int</span> rt;</span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_LOCKDEP</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">lockdep_map</span> <span class="title">lockdep_map</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>使用工作队列</li>
 </ul>
+<h2 id="第十二章-内存管理"><a href="#第十二章-内存管理" class="headerlink" title="第十二章 内存管理"></a>第十二章 内存管理</h2><h3 id="1-1-页和区"><a href="#1-1-页和区" class="headerlink" title="1.1 页和区"></a>1.1 页和区</h3><p>在内核中把物理页作为内存管理的基本单位。页的大小根据体系结构不同大小不同，32就是4KB，64位就是8KB，使用一个page结构体来表示系统中的每个页。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">page</span> &#123;</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span>			flags;  <span class="comment">// 存放页的状态 可以至少同时表示出32种不同的状态</span></span><br><span class="line">   	<span class="type">atomic_t</span>				_count; <span class="comment">// 页的引用计数，为-1的时候表示内核没有引用这一页，在新的分配中可以使用它，内核调用page_count(struct page)来返回0表示这是个空闲页。</span></span><br><span class="line">    <span class="type">atomic_t</span>				_mapcount; </span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span>			private; <span class="comment">//私有数据</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">address_space</span>	*<span class="title">mapping</span>;</span> <span class="comment">//指向和这个页相关联address_space 对象</span></span><br><span class="line">    <span class="type">pgoff_t</span>					index;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>		<span class="title">lru</span>;</span></span><br><span class="line">    <span class="type">void</span>					*virtual; <span class="comment">//页的虚拟地址，高端内存的动态映射地址</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>内核仅用这个数据来描述当前在相关物理页种存放的东西，目的在于描述物理页本身，即页是否被分配，谁拥有这个页等等。</p>
+<p>区是为了在有限的虚拟地址空间里，既让内核安全高效的访问所有物理内存，又兼顾dma、性能、碎片和硬件限制的设计。</p>
+<p>在32位的机器中，Linux 把 4 GB 虚拟地址空间切成两段：</p>
+<ul>
+<li>0–3 GB：用户进程</li>
+<li>3–4 GB：内核固定映射（对所有进程相同）</li>
+</ul>
+<p>内核又把这 1 GB 继续细分为几个“内存域（zone）：</p>
+<table>
+<thead>
+<tr>
+<th align="left">区域</th>
+<th align="left">物理地址范围</th>
+<th align="left">虚拟地址范围</th>
+<th align="left">用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>ZONE_DMA</strong></td>
+<td align="left">0–16 MB</td>
+<td align="left">3 GB+0–16 MB</td>
+<td align="left">ISA 老设备 DMA 只能访问低 16 MB</td>
+</tr>
+<tr>
+<td align="left"><strong>ZONE_NORMAL</strong></td>
+<td align="left">16 MB–896 MB</td>
+<td align="left">3 GB+16 MB–896 MB</td>
+<td align="left">直接映射区，kmalloc() 大多数分配在这里，可以快速找到</td>
+</tr>
+<tr>
+<td align="left"><strong>ZONE_HIGHMEM</strong></td>
+<td align="left">896 MB–4 GB</td>
+<td align="left">3 GB+896 MB 以上</td>
+<td align="left">高端内存，不能永久映射到内核地址空间，只有在需要时临时映射</td>
+</tr>
+</tbody></table>
+<p>linux把系统的页划分为区，形成不同的内存池，这样可以按照用途来分配，分配是不可以跨区的。区的划分没有物理意义，是内核为了管理页采取的逻辑上的分组。</p>
+<p>在64位的体系结构中，如x86-64 给内核预留了 128 TB 虚拟地址，足够线性映射 64 TB 物理内存，不再需要 HIGHMEM，只剩下 ZONE_DMA &#x2F; ZONE_NORMAL。</p>
+<p>内核通过区和页这种机制来管理内存。</p>
+<h3 id="1-2-获得内存"><a href="#1-2-获得内存" class="headerlink" title="1.2 获得内存"></a>1.2 获得内存</h3><ul>
+<li><p>获取页</p>
+<p>主要是几个请求内存的接口，以页为单位：</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">场景 &#x2F; 需求</th>
+<th align="left">函数（宏）原型</th>
+<th align="left">获得什么</th>
+<th align="left">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">分配 2^order  个连续页</td>
+<td align="left"><code>struct page *alloc_pages(gfp_t gfp_mask, unsigned int order)</code></td>
+<td align="left">首 page 指针</td>
+<td align="left">最常用底层接口</td>
+</tr>
+<tr>
+<td align="left">只拿 1 页</td>
+<td align="left"><code>#define alloc_page(gfp) alloc_pages(gfp, 0)</code></td>
+<td align="left">同上</td>
+<td align="left">宏</td>
+</tr>
+<tr>
+<td align="left">拿页并返回虚拟地址</td>
+<td align="left"><code>unsigned long __get_free_pages(gfp_t gfp, unsigned int order)</code></td>
+<td align="left">逻辑地址的指针</td>
+<td align="left">内部仍用 alloc_pages，再 page_address</td>
+</tr>
+<tr>
+<td align="left">同上，只拿 1 页</td>
+<td align="left"><code>#define __get_free_page(gfp) __get_free_pages(gfp, 0)</code></td>
+<td align="left">同上</td>
+<td align="left">宏</td>
+</tr>
+<tr>
+<td align="left">拿 1 页并清零</td>
+<td align="left"><code>unsigned long get_zeroed_page(gfp_t gfp)</code></td>
+<td align="left">逻辑地址的指针</td>
+<td align="left">含 <code>__GFP_ZERO</code></td>
+</tr>
+<tr>
+<td align="left">释放 page 描述符</td>
+<td align="left"><code>void __free_pages(struct page *page, unsigned int order)</code></td>
+<td align="left">-</td>
+<td align="left">与 alloc_pages 成对</td>
+</tr>
+<tr>
+<td align="left">释放线性地址</td>
+<td align="left"><code>void free_pages(unsigned long addr, unsigned int order)</code></td>
+<td align="left">-</td>
+<td align="left">与 __get_free_pages 成对</td>
+</tr>
+</tbody></table>
+<p>在获得内存后要进行错误检查，可能会分配失败的。</p>
+<ul>
+<li>小对象，以字节为单位的内存申请，物理连续</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">场景</th>
+<th align="left">函数原型</th>
+<th align="left">获得什么</th>
+<th align="left">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">通用小对象</td>
+<td align="left"><code>void *kmalloc(size_t size, gfp_t gfp)</code></td>
+<td align="left">内存块的指针</td>
+<td align="left">&lt; 4 MB，最常用</td>
+</tr>
+<tr>
+<td align="left">清零版本</td>
+<td align="left"><code>void *kzalloc(size_t size, gfp_t gfp)</code></td>
+<td align="left">同上</td>
+<td align="left">kmalloc + memset 0</td>
+</tr>
+<tr>
+<td align="left">大数组</td>
+<td align="left"><code>void *kcalloc(size_t n, size_t size, gfp_t gfp)</code></td>
+<td align="left">同上</td>
+<td align="left">kzalloc 的数组封装</td>
+</tr>
+<tr>
+<td align="left">释放</td>
+<td align="left"><code>void kfree(void *ptr)</code></td>
+<td align="left">-</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<p>注意检查分配是否成功，返回的是不是null</p>
+<ul>
+<li>vmalloc()</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">场景</th>
+<th align="left">函数原型</th>
+<th align="left">获得什么</th>
+<th align="left">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">任意大小，虚拟连续</td>
+<td align="left"><code>void *vmalloc(unsigned long size)</code></td>
+<td align="left">内核虚拟地址</td>
+<td align="left">可能睡眠，不能用于 DMA</td>
+</tr>
+<tr>
+<td align="left">释放</td>
+<td align="left"><code>void vfree(const void *addr)</code></td>
+<td align="left">-</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<p>大多数情况下，只有硬件设备需要得到物理连续的地址。但是内核使用kmalloc性能好，vmalloc需要一个个的映射，建立页表项，</p>
+<ul>
+<li>gfp_mask标志</li>
+</ul>
+<p>在以上接口中，我们都能发现，它用到了一个参数<code>gfp_t gfp_mask</code> ，这个参数是一个分配器的标志，可以理解为内核把“怎么拿页”抽象成了gfp_mask这样的一个位图。包括从哪里拿？拿的时候能干吗？即区修饰符，行为修饰符。</p>
+<table>
+<thead>
+<tr>
+<th align="left">类别</th>
+<th align="left">常用位</th>
+<th align="left">作用一句话</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>区修饰符</strong></td>
+<td align="left"><code>__GFP_DMA</code>、<code>__GFP_DMA32</code>、<code>__GFP_HIGHMEM</code></td>
+<td align="left">限定从 ZONE_DMA &#x2F; DMA32 &#x2F; HIGHMEM 拿页，默认从zone_normal区分配。不能给_get_free_pages()和kalloc()指定高端内存，他们返回的是逻辑地址而不是page结构，分配的这个页可能还没有映射到虚拟空间上。</td>
+</tr>
+<tr>
+<td align="left"><strong>行为修饰符</strong></td>
+<td align="left"><code>__GFP_IO</code>、<code>__GFP_FS</code>、<code>__GFP_WAIT</code>、<code>__GFP_COLD</code>、<code>__GFP_ZERO</code>、<code>__GFP_NOWARN</code> 等</td>
+<td align="left">能否启磁盘 I&#x2F;O、能否启文件系统 I&#x2F;O、能否睡眠、是否应该使用高速缓存中快要淘汰出的页、是否清零、是否不打印失败警告</td>
+</tr>
+</tbody></table>
+<p>类型标志则是行为和区描述符的组合，来完成特殊类型的处理。一般用这个就行了。</p>
+<table>
+<thead>
+<tr>
+<th>宏</th>
+<th>隐含的位</th>
+<th>典型场景</th>
+<th>能否阻塞</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>GFP_KERNEL</code></td>
+<td><code>__GFP_WAIT | __GFP_IO | __GFP_FS</code></td>
+<td>普通进程上下文</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>GFP_ATOMIC</code></td>
+<td><code>__GFP_HIGH | __GFP_ATOMIC</code></td>
+<td>中断、持有 spinlock（不可睡眠）</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>GFP_NOIO</code></td>
+<td><code>__GFP_WAIT</code>（但无 <code>__GFP_IO</code>）</td>
+<td>块层、不会启动磁盘I&#x2F;O不能递归 I&#x2F;O</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>GFP_NOFS</code></td>
+<td><code>__GFP_WAIT | __GFP_IO</code>（无 <code>__GFP_FS</code>）</td>
+<td>文件系统内部</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>GFP_USER</code></td>
+<td>同 <code>GFP_KERNEL</code></td>
+<td>给用户态进程页缓存</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>GFP_HIGHUSER</code></td>
+<td><code>GFP_USER | __GFP_HIGHMEM</code></td>
+<td>用户态页，优先 HIGHMEM</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>GFP_HIGHUSER_MOVABLE</code></td>
+<td><code>GFP_HIGHUSER</code> + 可迁移属性</td>
+<td>匿名页、可压缩&#x2F;迁移</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>GFP_DMA</code></td>
+<td><code>__GFP_DMA</code></td>
+<td>ISA 设备 DMA，通常与上面某个标志组合使用</td>
+<td>✅&#x2F;❌</td>
+</tr>
+<tr>
+<td><code>GFP_DMA32</code></td>
+<td><code>__GFP_DMA32</code></td>
+<td>32 位总线设备</td>
+<td>✅&#x2F;❌</td>
+</tr>
+</tbody></table>
+<p>什么时候使用哪种标志：</p>
+<p>普通内核数据结构		 GFP_KERNEL<br>中断 &#x2F; 自旋锁内  		   GFP_ATOMIC<br>文件系统内部       	 	GFP_NOFS<br>块层 I&#x2F;O 路径        		GFP_NOIO<br>用户态页缓存        		GFP_USER &#x2F; GFP_HIGHUSER_MOVABLE<br>DMA内存可以睡眠		GFP_DMA|GFP_KERNEL</p>
+<h3 id="1-3-使用页"><a href="#1-3-使用页" class="headerlink" title="1.3 使用页"></a>1.3 使用页</h3><p>​	从上面我们知道了怎么从内存中获得页,但对于程序的数据结构来说,一个页的粒度还是太大了,用不了那么多啊,总不能随便一个数据结构就用一页,那多浪费,又产生大量碎片,怎么办呢?那就继续细分!<br>​	在内核中,分配和释放数据结构是内核中最普遍的操作,为了便于数据的频繁分配和回收,内核的开发人员经常会用到空闲链表,空闲链表里装着已经分配好的数据结构块,当我们需要的时候就从空闲链表抓一个数据块,把我们的数据塞进去.不用的时候再放回空闲链表(并不释放).这样空闲链表就相当于对象高速缓存(快速存储频繁使用的对象类型).</p>
+<p>​	空闲链表虽便于数据结构的频繁分配和回收，但面临不能全局控制的问题，内核无法在内存紧张时通知其收缩缓存大小以释放内存，且内核不知其存在。</p>
+<p>​	空闲链表也有缺陷,那继续修复.slab层应运而生.slab分配器就扮演了通用数据结构缓存层的角色.我们用slab层在页之上,再做一级对象级的内存管理.</p>
+<p>​	slab分配器的设计原则- <strong>缓存频繁使用的数据结构</strong>：频繁分配和释放的数据结构应被缓存，以提高性能。- <strong>避免内存碎片</strong>：空闲链表的缓存连续存放，防止内存碎片化.</p>
+<p>​	那么slab是怎么设计的呢?</p>
+<ul>
+<li><ul>
+<li>slab的设计</li>
+</ul>
+</li>
+</ul>
+<p>​	slab层把不同的对象划分为所谓的高速缓存组,其中的每个高速缓存组都存放着不同类型的对象.而每种对象类型,对应一个高速缓存.在内核中,我们把这个高速缓存称作<code>kmem_cache</code> .他用来专门存放一种对象.一种内核数据结构（如 <code>task_struct</code>、<code>inode</code>、<code>dentry</code> 等）对应一个 <strong>kmem_cache</strong>.</p>
+<p>​	然后,这些高速缓存又被分为了slab.每个 slab 是 <strong>一个或多个连续物理页</strong>（通常是 1、2、4、8 页，按 2ⁿ 对齐），内部切成固定数量的 <strong>对象槽位</strong>。每个slab都包含一些对象成员,,就是被缓存的数据结构.</p>
+<p>slab 有三种状态：</p>
+<blockquote>
+<p> <strong>empty</strong>：所有槽位空闲；系统内存紧张时可以被整页回收。<br> <strong>partial</strong>：部分已分配，部分空闲；<strong>分配优先从这里拿</strong>，避免创建新 slab。<br> <strong>full</strong>：已全部用完；不再参与分配，直到有对象被释放回来。</p>
+</blockquote>
+<p>​	每个slab被划分为许多对象槽.这些槽位是真正返给调用者的那块对齐内存；大小由 kmem_cache 决定，通常是 32、64、128、…、8192 字节档.</p>
+<p>​	分配时：slab 层直接把一个对象槽位从链表里摘掉；</p>
+<p>​	释放时：把对象放回所属 slab，并立刻合并到空闲链表中，O(1) 完成。</p>
+<p>可以将这个抽象为一个小抽屉:</p>
+<p>┌──────────────────────────┐<br>│ 抽屉柜：kmem_cache       │  ← 一种对象类型一个柜子<br>│                          │<br>│  ┌────────────────────┐  │<br>│  │ 抽屉：slab         │  ← 一个&#x2F;多个连续物理页<br>│  │                    │  │<br>│  │ ┌──┐ ┌──┐ ┌──┐    │  │<br>│  │ │obj││obj││obj│ … │ │  ← 真正可用的对象实例<br>│  │ └──┘ └──┘ └──┘    │  │<br>│  └────────────────────┘  │<br>│  ┌────────────────────┐  │<br>│  │ 抽屉：slab         │  │<br>│  └────────────────────┘  │<br>│  …                       │<br>└──────────────────────────┘</p>
+<p>​		</p>
+<p>​	上面说了一些理论知识的理解，我们再来看一些代码相关的。我们自上而下的从抽屉柜（高速缓存）kmem_cache来看：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">kmem_cache</span> &#123;</span></span><br><span class="line">    <span class="comment">/* 对象属性 */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span>        object_size;    <span class="comment">/* 用户请求的对象大小 */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span>        size;           <span class="comment">/* 对齐/填充后真正占用空间 */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span>        align;          <span class="comment">/* 对齐边界 */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span>        min_partial;    <span class="comment">/* per-node partial 链表最少保留 slab 数 */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 分配/释放钩子 */</span></span><br><span class="line">    <span class="type">void</span>               (*ctor)(<span class="type">void</span> *); <span class="comment">/* 对象构造函数（如初始化锁） */</span></span><br><span class="line">    <span class="type">const</span> <span class="type">char</span>         *name;           <span class="comment">/* 人类可读名字，/proc/slabinfo 可见 */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* slab 管理参数 */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span>        oo;             <span class="comment">/* oo = (order &lt;&lt; 16) | objects</span></span><br><span class="line"><span class="comment">                                           - order: 本 cache 一个 slab 占 2^order 页</span></span><br><span class="line"><span class="comment">                                           - objects: 该 slab 可容纳对象数 */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span>        min;            <span class="comment">/* 最小 slab 阶数（内存紧张时降级） */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* CPU 与节点级缓存 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">kmem_cache_cpu</span> __<span class="title">percpu</span> *<span class="title">cpu_slab</span>;</span> <span class="comment">/* per-CPU 数据结构 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">kmem_cache_node</span> *<span class="title">node</span>[<span class="title">MAX_NUMNODES</span>];</span> <span class="comment">/* per-NUMA-node 结构数组 */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 调试与安全 */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_SLAB_FREELIST_HARDENED</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span>       random;         <span class="comment">/* 每次启动随机值，用于指针哈希 */</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">    <span class="comment">/* 其余字段：list_head list; (所有 kmem_cache 全局链表) 等 */</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">/*来自kimi的5.18+内核的slub_def.h中的简化视图*/</span></span><br></pre></td></tr></table></figure>
+
+<p>​	从结构体内中我们可以看出kmem_cache为某一种专用的对象类型服务，用来统管<strong>某一种固定大小对象的分配</strong>，结构体的定义在创建阶段就将对象的大小，以及摆放规则划分好。他管理着更下一层的slab，包含着满，半满，空三个数据链表。</p>
+<p>​	再来看看slab。slab描述符struct slab 用来描述每个slab。现在的slab描述符和page复用。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">slab</span> &#123;</span>                 <span class="comment">/* 与 struct page 共用内存 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">kmem_cache</span> *<span class="title">slab_cache</span>;</span>   <span class="comment">/* 指向所属的 cache */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">slab</span>       *<span class="title">next</span>;</span>         <span class="comment">/* per-CPU 单向链表指针 */</span></span><br><span class="line">    <span class="type">int</span>               slabs;         <span class="comment">/* 本链表中剩余 slab 数（per-CPU 列表用） */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>  <span class="title">slab_list</span>;</span>     <span class="comment">/* per-node 双向链表节点 */</span></span><br><span class="line">    <span class="type">void</span>              *freelist;     <span class="comment">/* 指向本 slab 内第一个空闲对象 */</span></span><br><span class="line">    <span class="comment">/* 其余 page 字段被复用/隐藏 */</span></span><br><span class="line">&#125;;<span class="comment">//这里和2.6有很多不同了，但是思想上还是大体一致。</span></span><br></pre></td></tr></table></figure>
+
+<p>​	对象就是一个个简单的结构体就不细述了。</p>
+<h3 id="1-5-slab分配器的接口"><a href="#1-5-slab分配器的接口" class="headerlink" title="1.5 slab分配器的接口"></a>1.5 slab分配器的接口</h3><p>创建销毁：</p>
+<table>
+<thead>
+<tr>
+<th>kmem_cache_create()</th>
+<th><code>struct kmem_cache *kmem_cache_create(const char *name, size_t size, size_t align, unsigned flags, void (*ctor)(void *));</code></th>
+<th>给某一类对象建专用高速缓存；返回的指针就是“cache 句柄”。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>kmem_cache_create_usercopy()</td>
+<td>同上，多两个参数 <code>useroffset, usersize</code></td>
+<td>若对象里包含用户可拷贝区域，需用此版本以便 hardened usercopy 检查。</td>
+</tr>
+<tr>
+<td>kmem_cache_destroy()</td>
+<td><code>void kmem_cache_destroy(struct kmem_cache *s);</code></td>
+<td>卸载模块时销毁；必须保证所有 slab 已空闲，否则返回 <code>-EBUSY</code>。</td>
+</tr>
+<tr>
+<td>kmem_cache_shrink()</td>
+<td><code>int kmem_cache_shrink(struct kmem_cache *s);</code></td>
+<td>主动把空闲 slab 还给伙伴系统，返回值是“已释放页数”。</td>
+</tr>
+</tbody></table>
+<p>分配释放：</p>
+<table>
+<thead>
+<tr>
+<th>kmem_cache_alloc()</th>
+<th><code>void *kmem_cache_alloc(struct kmem_cache *s, gfp_t gfpflags);</code></th>
+<th>从指定 cache 拿对象；gfpflags 同 kmalloc。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>kmem_cache_zalloc()</td>
+<td><code>void *kmem_cache_zalloc(struct kmem_cache *s, gfp_t gfpflags);</code></td>
+<td>同上但自动清零。</td>
+</tr>
+<tr>
+<td>kmem_cache_free()</td>
+<td><code>void kmem_cache_free(struct kmem_cache *s, void *obj);</code></td>
+<td>把对象放回所属 cache；必须配对，不能 kfree。</td>
+</tr>
+<tr>
+<td>kmem_cache_alloc_bulk()</td>
+<td><code>int kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t gfp, size_t nr, void **objs);</code></td>
+<td>一次拿多个对象，减少 per-CPU 链表锁操作。</td>
+</tr>
+<tr>
+<td>kmem_cache_free_bulk()</td>
+<td><code>void kmem_cache_free_bulk(struct kmem_cache *s, size_t nr, void **objs);</code></td>
+<td>对应批量释放。</td>
+</tr>
+</tbody></table>
+<p><code>kmem_cache_create()</code> 只是把“对象规格、对齐、构造&#x2F;析构钩子、per-CPU 与 per-node 管理结构”准备好，<strong>并没有真正去向伙伴系统拿页</strong>、也没有生成任何 slab。</p>
+<p>第一次真正需要内存时（即第一次调用 <code>kmem_cache_alloc()</code> 且发现 freelist 为空）才会触发。</p>
+<p>分配器2.6中和现代内核差距不小，后面再看。</p>
+<p>2.6内核中，获得一个slab的内存是底层调用用<code>kmem_getpages(strcut kmem_cahce * cachep,gfp_t flags,int nodeid)</code>这个函数函数来实现的，而这个用的是<code>__get_free_pages()</code>低级内核页分配器进行的。</p>
 
     </div>
 
@@ -618,7 +968,10 @@
     <a href="/2025/08/02/hello-world/" rel="prev" title="Hello World">
       <i class="fa fa-chevron-left"></i> Hello World
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2025/08/05/LDD3%20%E6%9E%84%E9%80%A0%E5%92%8C%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%9D%97/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -677,7 +1030,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux-%E5%86%85%E6%A0%B8%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">Linux 内核设计与实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">第三章 进程管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">3.1进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E8%BF%9B%E7%A8%8B%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%92%8C%E4%BB%BB%E5%8A%A1%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.2.</span> <span class="nav-text">3.2 进程描述符和任务结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.3.</span> <span class="nav-text">3.3 进程的状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%AE%B6%E6%97%8F%E6%95%B0"><span class="nav-number">1.1.4.</span> <span class="nav-text">3.4 进程的家族数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="nav-number">1.1.5.</span> <span class="nav-text">3.5 进程的创建</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6"><span class="nav-number">1.2.</span> <span class="nav-text">第四章 进程调度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%83%E7%AB%A0-%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">第七章 中断处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E5%8D%8A%E9%83%A8%E5%88%86%E5%92%8C%E6%8E%A8%E5%90%8E%E6%89%A7%E8%A1%8C%E7%9A%84%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.4.</span> <span class="nav-text">下半部分和推后执行的工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%AD%E6%96%AD%E4%B8%8B%E5%8D%8A%E9%83%A8%E5%A4%84%E7%90%86"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. 中断下半部处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AE%9E%E7%8E%B0%E4%B8%AD%E6%96%AD%E4%B8%8B%E5%8D%8A%E9%83%A8%E7%9A%84%E6%9C%BA%E5%88%B6"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. 实现中断下半部的机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-%E8%BD%AF%E4%B8%AD%E6%96%AD"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">2.1 软中断</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-tasklet"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">2.2 tasklet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-%E5%B7%A5%E4%BD%9C%E9%98%9F%E5%88%97"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">2.3 工作队列</span></a></li></ol></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux-%E5%86%85%E6%A0%B8%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">Linux 内核设计与实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">第三章 进程管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">3.1进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E8%BF%9B%E7%A8%8B%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%92%8C%E4%BB%BB%E5%8A%A1%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.2.</span> <span class="nav-text">3.2 进程描述符和任务结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.3.</span> <span class="nav-text">3.3 进程的状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%AE%B6%E6%97%8F%E6%95%B0"><span class="nav-number">1.1.4.</span> <span class="nav-text">3.4 进程的家族数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="nav-number">1.1.5.</span> <span class="nav-text">3.5 进程的创建</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6"><span class="nav-number">1.2.</span> <span class="nav-text">第四章 进程调度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%83%E7%AB%A0-%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">第七章 中断处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%85%AB%E7%AB%A0-%E4%B8%8B%E5%8D%8A%E9%83%A8%E5%88%86%E5%92%8C%E6%8E%A8%E5%90%8E%E6%89%A7%E8%A1%8C%E7%9A%84%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.4.</span> <span class="nav-text">第八章 下半部分和推后执行的工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%AD%E6%96%AD%E4%B8%8B%E5%8D%8A%E9%83%A8%E5%A4%84%E7%90%86"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. 中断下半部处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AE%9E%E7%8E%B0%E4%B8%AD%E6%96%AD%E4%B8%8B%E5%8D%8A%E9%83%A8%E7%9A%84%E6%9C%BA%E5%88%B6"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. 实现中断下半部的机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-%E8%BD%AF%E4%B8%AD%E6%96%AD"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">2.1 软中断</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-tasklet"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">2.2 tasklet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-%E5%B7%A5%E4%BD%9C%E9%98%9F%E5%88%97"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">2.3 工作队列</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">1.5.</span> <span class="nav-text">第十二章 内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E9%A1%B5%E5%92%8C%E5%8C%BA"><span class="nav-number">1.5.1.</span> <span class="nav-text">1.1 页和区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E8%8E%B7%E5%BE%97%E5%86%85%E5%AD%98"><span class="nav-number">1.5.2.</span> <span class="nav-text">1.2 获得内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E4%BD%BF%E7%94%A8%E9%A1%B5"><span class="nav-number">1.5.3.</span> <span class="nav-text">1.3 使用页</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-slab%E5%88%86%E9%85%8D%E5%99%A8%E7%9A%84%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.5.4.</span> <span class="nav-text">1.5 slab分配器的接口</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -693,7 +1046,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -730,12 +1083,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">12k</span>
+    <span title="站点总字数">25k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11 分钟</span>
+    <span title="站点阅读时长">22 分钟</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
