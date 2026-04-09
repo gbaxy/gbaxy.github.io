@@ -47,7 +47,7 @@
   };
 </script>
 
-  <title> | Studio Blog</title>
+  <title>LDD3 并发与竞态 | Studio Blog</title>
   
 
 
@@ -187,9 +187,8 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          LDD3 并发与竞态
         </h1>
-
         <div class="post-meta">
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -225,14 +224,14 @@
 
         </div>
       </header>
-
     
     
     
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="并发与竞态"><a href="#并发与竞态" class="headerlink" title="并发与竞态"></a>并发与竞态</h1><p>​	什么是并发呢？什么是竞态</p>
+
+      <h1 id="并发与竞态"><a href="#并发与竞态" class="headerlink" title="并发与竞态"></a>并发与竞态</h1><p>​	什么是并发呢？什么是竞态</p>
 <p>​	并发就是<strong>同时存在多条能独立推进、且彼此不可预期对方进度的执行路径</strong>，这些路径对同一份状态拥有读写机会，从而带来“谁先谁后”的不确定性。这个不确定性可能会导致同一个时间对同一个资源的访问，这就是竞态。并发的价值在于“让事情看起来同时进行”，代价是“必须主动管理这些时间线之间的交叉点”，否则就会出现“字被盖掉”的竞态。并发是能力，竞态是 bug。</p>
 <p>​	为了处理这个bug，我们就有保护这个资源，让他在一个时刻只能被一个人所用，当有人在拥有这个资源的使用权时，其他人不能使用，这就是锁。</p>
 <p>​	我们要建立临界区: 即在任意给定时刻，代码只能被一个线程执行。</p>
@@ -303,7 +302,7 @@
 </div>
    </div>
  
-        
+      
 
 <div>
 <ul class="post-copyright">
@@ -321,12 +320,12 @@
 </div>
 
 
-      <footer class="post-footer">
+    <footer class="post-footer">
 
-        
+      
 
 
-        
+      
     <div class="post-nav">
       <div class="post-nav-item">
     <a href="/2025/08/11/LDD3%20%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/" rel="prev" title="">
@@ -337,8 +336,7 @@
        <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
-      </footer>
-    
+    </footer>
   </article>
   
   

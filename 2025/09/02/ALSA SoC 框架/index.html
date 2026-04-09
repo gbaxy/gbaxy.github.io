@@ -47,7 +47,7 @@
   };
 </script>
 
-  <title> | Studio Blog</title>
+  <title>ALSA SoC 框架 | Studio Blog</title>
   
 
 
@@ -187,9 +187,8 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          ALSA SoC 框架
         </h1>
-
         <div class="post-meta">
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -225,14 +224,14 @@
 
         </div>
       </header>
-
     
     
     
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="ALSA-SoC-框架-编解码器和平台类驱动程序"><a href="#ALSA-SoC-框架-编解码器和平台类驱动程序" class="headerlink" title="ALSA SoC 框架 编解码器和平台类驱动程序"></a>ALSA SoC 框架 编解码器和平台类驱动程序</h1><h2 id="ALSA是什么？"><a href="#ALSA是什么？" class="headerlink" title="ALSA是什么？"></a>ALSA是什么？</h2><p>​	ALSA(advanced linux sound architecture) 高级linux声音架构。但是这个架构主要为计算机设置，没有怎么考虑嵌入式，后来就出现ASoC（ALSA system on chip)，为嵌入式处理器和各种编解码器提供更好的ALSA支持。<br>​	ASoC将嵌入式音频系统划分为3个可重用的组件驱动程序，即机器类（machine class）、平台类（platform class）和编解码器类（codec class）。其中平台类和编解码器类具有跨平台属性，机器类则是板级的。即平台类和编解码类一个就可以在不同的板子上使用，而机器就是这块板子上配置编解码器和平台的，所以是专属于板子的。</p>
+
+      <h1 id="ALSA-SoC-框架-编解码器和平台类驱动程序"><a href="#ALSA-SoC-框架-编解码器和平台类驱动程序" class="headerlink" title="ALSA SoC 框架 编解码器和平台类驱动程序"></a>ALSA SoC 框架 编解码器和平台类驱动程序</h1><h2 id="ALSA是什么？"><a href="#ALSA是什么？" class="headerlink" title="ALSA是什么？"></a>ALSA是什么？</h2><p>​	ALSA(advanced linux sound architecture) 高级linux声音架构。但是这个架构主要为计算机设置，没有怎么考虑嵌入式，后来就出现ASoC（ALSA system on chip)，为嵌入式处理器和各种编解码器提供更好的ALSA支持。<br>​	ASoC将嵌入式音频系统划分为3个可重用的组件驱动程序，即机器类（machine class）、平台类（platform class）和编解码器类（codec class）。其中平台类和编解码器类具有跨平台属性，机器类则是板级的。即平台类和编解码类一个就可以在不同的板子上使用，而机器就是这块板子上配置编解码器和平台的，所以是专属于板子的。</p>
 <h2 id="ASoC"><a href="#ASoC" class="headerlink" title="ASoC"></a>ASoC</h2><p>​	在当前的内核实现中，使用一种通用方法——组件（component），来进行平台和编码器的描述。有两个结构体来辅助进行，<code>struct snd_soc_component</code>(即编码器或平台)和<code>struct snd_soc_component_driver</code>（他们各自的音频接口驱动程序）。<br>​	数字音频接口（digital audio interface，DAI）是一种总线控制器，可以将音频数据从一端（比如SoC）送到另一端（编解码器）。ASoC支持大多数DAI</p>
 <p>​	一个ASoC分为三个元素（平台、编解码器、机器），每一个元素都有自己的专用驱动程序。</p>
 <ol>
@@ -345,7 +344,7 @@
 </div>
    </div>
  
-        
+      
 
 <div>
 <ul class="post-copyright">
@@ -363,12 +362,12 @@
 </div>
 
 
-      <footer class="post-footer">
+    <footer class="post-footer">
 
-        
+      
 
 
-        
+      
     <div class="post-nav">
       <div class="post-nav-item">
     <a href="/2025/08/21/LDD3%20%E5%B9%B6%E5%8F%91%E4%B8%8E%E7%AB%9E%E6%80%81/" rel="prev" title="">
@@ -379,8 +378,7 @@
        <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
-      </footer>
-    
+    </footer>
   </article>
   
   
