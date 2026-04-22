@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"gbisaxy.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false,"width":220},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#5da8ff","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="iis协议一、概述  I²S（Inter-IC Sound，集成电路内置音频总线）是飞利浦（Philips）于1986年定义、1996年修订的数字音频总线标准，专为在嵌入式系统内部器件之间传输数字音频数据而设计，是一种芯片之间传输数字音频数据的串行总线协议，常用于 SoC、Codec、DAC、ADC、音频功放、蓝牙模块、DSP 之间传输 PCM 音频数据。 例如： 123麦克风&#x2F;ADC  ---&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iis 协议了解">
+<meta property="og:url" content="https://gbisaxy.top/2025/08/05/iis%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Studio Blog">
+<meta property="og:description" content="iis协议一、概述  I²S（Inter-IC Sound，集成电路内置音频总线）是飞利浦（Philips）于1986年定义、1996年修订的数字音频总线标准，专为在嵌入式系统内部器件之间传输数字音频数据而设计，是一种芯片之间传输数字音频数据的串行总线协议，常用于 SoC、Codec、DAC、ADC、音频功放、蓝牙模块、DSP 之间传输 PCM 音频数据。 例如： 123麦克风&#x2F;ADC  ---&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gbisaxy-blog.oss-cn-hangzhou.aliyuncs.com/Blog/20260422234946221.jpeg">
+<meta property="og:image" content="https://gbisaxy-blog.oss-cn-hangzhou.aliyuncs.com/Blog/20260423001459425.png">
+<meta property="article:published_time" content="2025-08-05T13:11:41.000Z">
+<meta property="article:modified_time" content="2025-08-05T13:11:41.000Z">
+<meta property="article:author" content="gb">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gbisaxy-blog.oss-cn-hangzhou.aliyuncs.com/Blog/20260422234946221.jpeg">
+
+<link rel="canonical" href="https://gbisaxy.top/2025/08/05/iis%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>iis协议了解 | Studio Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Studio Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://gbisaxy.top/2025/08/05/iis%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/20210404011504_4219e.png">
+      <meta itemprop="name" content="gb">
+      <meta itemprop="description" content="路漫漫其修远兮">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Studio Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          iis协议了解
+        </h1>
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-08-05 21:11:41" itemprop="dateCreated datePublished" datetime="2025-08-05T21:11:41+08:00">2025-08-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+
+      <h1 id="iis协议"><a href="#iis协议" class="headerlink" title="iis协议"></a>iis协议</h1><h2 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h2><p>  I²S（Inter-IC Sound，集成电路内置音频总线）是飞利浦（Philips）于1986年定义、1996年修订的数字音频总线标准，专为在嵌入式系统<code>内部器件之间传输数字音频数据</code>而设计，是一种芯片之间传输数字音频数据的串行总线协议，常用于 SoC、Codec、DAC、ADC、音频功放、蓝牙模块、DSP 之间传输 PCM 音频数据。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">麦克风/ADC  ---&gt;  I2S  ---&gt;  SoC</span><br><span class="line"></span><br><span class="line">SoC  ---&gt;  I2S  ---&gt;  Audio Codec  ---&gt;  耳机/喇叭</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="二、信号线"><a href="#二、信号线" class="headerlink" title="二、信号线"></a>二、信号线</h2><p>典型 I²S 至少有 3 根线，有时还会有第 4 根主时钟线：</p>
+<table>
+<thead>
+<tr>
+<th>信号线</th>
+<th>别名</th>
+<th>方向</th>
+<th>功能说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>SCK</strong></td>
+<td>BCLK &#x2F; SCLK</td>
+<td>主→从</td>
+<td><strong>串行时钟&#x2F;位时钟</strong>（Bit Clock），每个时钟周期传输1bit数据</td>
+</tr>
+<tr>
+<td><strong>WS</strong></td>
+<td>LRCK &#x2F; WCK</td>
+<td>主→从</td>
+<td><strong>字选择</strong>（Word Select）&#x2F;<strong>左右声道选择时钟</strong>，0&#x3D;左声道，1&#x3D;右声道</td>
+</tr>
+<tr>
+<td><strong>SD</strong></td>
+<td>SDATA &#x2F; SDI&#x2F;SDO</td>
+<td>双向</td>
+<td><strong>串行音频数据</strong>，以二进制补码形式传输音频数据</td>
+</tr>
+<tr>
+<td><strong>MCLK</strong></td>
+<td>主时钟</td>
+<td>主→从</td>
+<td>（可选）<strong>系统时钟</strong>，通常为采样频率的256&#x2F;384&#x2F;512倍</td>
+</tr>
+</tbody></table>
+<p>BCLK 是 bit clock，也叫 serial clock。每传输 1 bit 数据，就需要一个 BCLK 周期。</p>
+<p>LRCLK 是左右声道选择信号，也叫 word select。它的频率通常等于采样率。例如 48 kHz 音频，LRCLK 就是 48 kHz。一般 LRCLK &#x3D; 0 表示左声道，LRCLK &#x3D; 1 表示右声道，但具体也要看控制器和 Codec 配置。</p>
+<p>SDATA 是真正传输 PCM 音频数据的线。数据通常是 <strong>MSB first</strong>，也就是最高位先传。</p>
+<p>MCLK 是主时钟，不是所有设备都必须使用。很多 Codec 需要 MCLK 来产生内部采样时钟。常见 MCLK 是采样率的整数倍，比如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MCLK = 256 * Fs</span><br><span class="line">MCLK = 384 * Fs</span><br><span class="line">MCLK = 512 * Fs</span><br></pre></td></tr></table></figure>
+
+<p>其中fs是采样率。</p>
+<h2 id="三、常见的工作模式"><a href="#三、常见的工作模式" class="headerlink" title="三、常见的工作模式"></a>三、常见的工作模式</h2><p>主要区别在沿途数据相对于LRCLK的位置</p>
+<h3 id="1-标准I²S模式（Philips标准）最常用"><a href="#1-标准I²S模式（Philips标准）最常用" class="headerlink" title="1. 标准I²S模式（Philips标准）最常用"></a>1. 标准I²S模式（Philips标准）最常用</h3><ul>
+<li><p><strong>数据延迟</strong>：WS信号变化后，<strong>第2个SCK上升沿</strong>MSB有效（MSB 是 Most Significant Bit，意思是 <strong>最高有效位</strong>，在一个二进制数里，越靠左的位权重越大，最左边那一位就是 MSB。）</p>
+</li>
+<li><p><strong>特点</strong>：数据相对于WS有1个bit的延迟，也就是说标准 I2S 有一个 1 bit delay。</p>
+<p>假设是双声道，LRCLK &#x3D; 0 表示左声道，LRCLK &#x3D; 1 表示右声道，传输大概是这样：</p>
+</li>
+</ul>
+<p><img src="https://gbisaxy-blog.oss-cn-hangzhou.aliyuncs.com/Blog/20260422234946221.jpeg"></p>
+<p>标准iis一般是:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">MSB first</span><br><span class="line">LRCLK = 0: 左声道</span><br><span class="line">LRCLK = 1: 右声道</span><br><span class="line">LRCLK 频率 = 采样率</span><br><span class="line">BCLK = 采样率 * 声道数 * slot宽度</span><br><span class="line"></span><br><span class="line">采样位宽 sample width：真正的音频数据位数</span><br><span class="line">slot宽度 slot width：总线上给每个声道预留的传输位数。</span><br><span class="line">比如</span><br><span class="line">左声道 slot，32 bit：</span><br><span class="line">[ 16 bit有效音频数据 ][ 16 bit填充位 ]</span><br><span class="line"></span><br><span class="line">右声道 slot，32 bit：</span><br><span class="line">[ 16 bit有效音频数据 ][ 16 bit填充位 ]</span><br><span class="line"></span><br><span class="line">每个 slot 里面真正有效的音频数据只有 16 bit，剩下的 16 bit 可能补 0，也可能被忽略。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>举个例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">采样率 = 48 kHz</span><br><span class="line">声道数 = 2</span><br><span class="line">slot宽度 = 32 bit</span><br><span class="line"></span><br><span class="line">LRCLK = 48 kHz</span><br><span class="line">BCLK = 48k * 2 * 32 = 3.072 MHz</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-左对齐模式（Left-Justified）"><a href="#2-左对齐模式（Left-Justified）" class="headerlink" title="2. 左对齐模式（Left Justified）"></a>2. 左对齐模式（Left Justified）</h3><ul>
+<li><strong>数据延迟</strong>：LRCLK 翻转后，马上开始传 MSB，没有标准 I2S 的 1 bit 延迟。</li>
+<li><strong>特点</strong>：无延迟，数据与WS边沿对齐</li>
+</ul>
+<h3 id="3-右对齐模式（Right-Justified-Sony格式）"><a href="#3-右对齐模式（Right-Justified-Sony格式）" class="headerlink" title="3. 右对齐模式（Right Justified &#x2F; Sony格式）"></a>3. 右对齐模式（Right Justified &#x2F; Sony格式）</h3><ul>
+<li><strong>数据延迟</strong>：数据LSB在WS边沿<strong>前1个BCLK</strong>有效</li>
+<li><strong>特点</strong>：数据右对齐，LSB紧贴WS边沿</li>
+</ul>
+<h3 id="4-DSP-PCM-Mode"><a href="#4-DSP-PCM-Mode" class="headerlink" title="4.DSP &#x2F; PCM Mode"></a>4.<strong>DSP &#x2F; PCM Mode</strong></h3><p>这种模式常见于单声道、多声道语音、蓝牙、Modem、TDM 音频接口。</p>
+<p>它通常不用传统的左右声道 LRCLK，而是用一个 <strong>Frame Sync</strong> 信号表示一帧开始</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">FSYNC:  __|‾|________________|‾|________</span><br><span class="line">BCLK :  _|‾|_|‾|_|‾|_|‾|_|‾|_|‾|_|‾|_</span><br><span class="line">SDATA:     CH0     CH1     CH2     CH3</span><br><span class="line"></span><br><span class="line">常见有：</span><br><span class="line">DSP_A：FSYNC 后延迟 1 个 BCLK 开始数据</span><br><span class="line">DSP_B：FSYNC 有效时就开始数据</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-TDM-Mode"><a href="#5-TDM-Mode" class="headerlink" title="5.TDM Mode"></a>5.<strong>TDM Mode</strong></h3><p>TDM 可以理解成多声道扩展版 I2S&#x2F;PCM。一个 frame 里不只有左右声道，而是很多 slot：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Frame:</span><br><span class="line">Slot0 Slot1 Slot2 Slot3 Slot4 Slot5 Slot6 Slot7</span><br><span class="line"></span><br><span class="line">比如 8 声道、每个 slot 32 bit、采样率 48 kHz：</span><br><span class="line">BCLK = 48k * 8 * 32 = 12.288 MHz</span><br></pre></td></tr></table></figure>
+
+<p>以上的内容大多在芯片的datasheet 中有介绍。</p>
+<h2 id="四、主从"><a href="#四、主从" class="headerlink" title="四、主从"></a>四、主从</h2><p>I²S 总线上通常有一个设备负责产生时钟，叫 <strong>master</strong>；另一个设备接收时钟，叫 <strong>slave</strong>。</p>
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SoC 作为 master： SoC 输出 BCLK、LRCLK、MCLK Codec 接收这些时钟 </span><br></pre></td></tr></table></figure>
+
+<p>也可以反过来：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Codec 作为 master： Codec 输出 BCLK、LRCLK SoC 按 Codec 的时钟收发数据 </span><br></pre></td></tr></table></figure>
+
+<p>在 Linux ASoC 驱动里，这部分经常会对应到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SND_SOC_DAIFMT_CBS_CFS	codec从设备 Codec Bit clock Slave Codec Frame clock Slave</span><br><span class="line">SND_SOC_DAIFMT_CBM_CFM	codec主设备 </span><br><span class="line">SND_SOC_DAIFMT_I2S		标准iis格式</span><br><span class="line">SND_SOC_DAIFMT_LEFT_J 	左对齐格式</span><br></pre></td></tr></table></figure>
+
+<p>其中 master&#x2F;slave 配置非常关键。</p>
+<h2 id="六、I²S-只传音频数据，不负责控制"><a href="#六、I²S-只传音频数据，不负责控制" class="headerlink" title="六、I²S 只传音频数据，不负责控制"></a>六、<strong>I²S 只传音频数据，不负责控制</strong></h2><p>I²S 本身只传 PCM 音频流，不负责配置 Codec 的音量、采样率、输入输出通道、电源管理等。</p>
+<p>所以实际系统里通常还会配合一条控制总线：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">I2S：传输音频数据 </span><br><span class="line">I2C / SPI：配置 Codec 寄存器</span><br><span class="line">GPIO：控制功放使能、复位、耳机检测等 </span><br></pre></td></tr></table></figure>
+
+<p>一个典型嵌入式音频连接可能是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">SoC I2S  &lt;----&gt;  Audio Codec</span><br><span class="line">SoC I2C  &lt;----&gt;  Audio Codec registers</span><br><span class="line">GPIO     -----&gt;  Codec reset / PA enable</span><br><span class="line"></span><br><span class="line">┌─────────┐                ┌─────────┐</span><br><span class="line">│    MCLK │───────────────→│ MCLK    │</span><br><span class="line">│    SCK  │───────────────→│ BCLK    │</span><br><span class="line">│    WS   │───────────────→│ LRCK    │</span><br><span class="line">│    SD   │←──────────────→│ DIN/DOUT│</span><br><span class="line">│    I2C  │←──────────────→│ SDA/SCL │</span><br><span class="line">└─────────┘                └─────────┘</span><br></pre></td></tr></table></figure>
+
+<p>在很多放大器上的硬件框图上都能看到对应的结构，比如：</p>
+<p><img src="https://gbisaxy-blog.oss-cn-hangzhou.aliyuncs.com/Blog/20260423001459425.png" alt="image-20260423001459377"></p>
+<h2 id="其他协议对比"><a href="#其他协议对比" class="headerlink" title="其他协议对比"></a>其他协议对比</h2><table>
+<thead>
+<tr>
+<th align="left">协议</th>
+<th align="left">典型信号</th>
+<th align="left">传什么</th>
+<th align="left">常见声道数</th>
+<th align="left">时序特点</th>
+<th align="left">常见场景</th>
+<th align="left">总结</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">I2S</td>
+<td align="left">BCLK LRCLK&#x2F;WS SDATA MCLK(可选)</td>
+<td align="left">PCM 音频采样</td>
+<td align="left">2 声道最常见</td>
+<td align="left">标准 I2S 是 LRCLK 翻转后延迟 1 个 BCLK 才出 MSB</td>
+<td align="left">SoC 和 Codec、DAC、ADC 之间</td>
+<td align="left">最经典的双声道数字音频总线</td>
+</tr>
+<tr>
+<td align="left">PCM</td>
+<td align="left">BCLK FSYNC DATA</td>
+<td align="left">PCM 音频采样</td>
+<td align="left">1 到 2 声道常见，也可扩展</td>
+<td align="left">更强调帧同步，常见 DSP_A &#x2F; DSP_B 模式</td>
+<td align="left">语音、Modem、蓝牙语音</td>
+<td align="left">更像“按帧说话”的语音接口</td>
+</tr>
+<tr>
+<td align="left">TDM</td>
+<td align="left">BCLK FSYNC DATA</td>
+<td align="left">多路 PCM 采样</td>
+<td align="left">4&#x2F;8&#x2F;16 声道常见</td>
+<td align="left">一帧里有很多 slot，每个 slot 一个通道</td>
+<td align="left">多麦阵列、车载、多通道 Codec&#x2F;DSP</td>
+<td align="left">I2S&#x2F;PCM 的多声道扩展版</td>
+</tr>
+<tr>
+<td align="left">PDM</td>
+<td align="left">CLK DATA</td>
+<td align="left">1bit 高速密度流</td>
+<td align="left">常见 1 到 2 路 Mic</td>
+<td align="left">不是多 bit PCM，而是要先滤波降采样成 PCM</td>
+<td align="left">数字 MEMS 麦克风</td>
+<td align="left">麦克风专用，先是“比特流”不是采样值</td>
+</tr>
+<tr>
+<td align="left">S&#x2F;PDIF</td>
+<td align="left">单线数据加地，物理上常见同轴&#x2F;光纤</td>
+<td align="left">PCM 或压缩音频流</td>
+<td align="left">2 声道常见</td>
+<td align="left">自带编码，和板级 I2S 时序风格不同</td>
+<td align="left">电视、机顶盒、功放、声卡</td>
+<td align="left">对外连接设备的消费类数字音频接口</td>
+</tr>
+</tbody></table>
+<p>PCM 更多指音频数据的编码格式，比如 16-bit PCM、24-bit PCM。</p>
+<p>I²S 是一种传输 PCM 数据的硬件接口协议。</p>
+<p>TDM 可以理解成 I²S&#x2F;PCM 接口的多通道扩展形式。例如 8 声道音频可以放在一个帧里传输：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Frame: CH0 CH1 CH2 CH3 CH4 CH5 CH6 CH7 </span><br></pre></td></tr></table></figure>
+
+<p>所以可以简单理解为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PCM：音频数据本身</span><br><span class="line">I2S：传输双声道 PCM 的常见接口 </span><br><span class="line">TDM：传输多声道 PCM 的扩展方式</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+     
+   <div>
+     <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+   </div>
+ 
+      
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>gb
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://gbisaxy.top/2025/08/05/iis%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/" title="iis 协议了解">https://gbisaxy.top/2025/08/05/iis协议了解/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+    <footer class="post-footer">
+
+      
+
+
+      
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/08/02/Linux%20%E5%86%85%E6%A0%B8%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/" rel="prev" title="Linux 内核设计与实现">
+      <i class="fa fa-chevron-left"></i> Linux 内核设计与实现
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/08/05/LDD3%20%E6%9E%84%E9%80%A0%E5%92%8C%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%9D%97/" rel="next" title="LDD3 构造和运行模块">
+      LDD3 构造和运行模块 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#iis%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.</span> <span class="nav-text">iis协议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%BF%A1%E5%8F%B7%E7%BA%BF"><span class="nav-number">1.2.</span> <span class="nav-text">二、信号线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%B8%B8%E8%A7%81%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">三、常见的工作模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%A0%87%E5%87%86I%C2%B2S%E6%A8%A1%E5%BC%8F%EF%BC%88Philips%E6%A0%87%E5%87%86%EF%BC%89%E6%9C%80%E5%B8%B8%E7%94%A8"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. 标准I²S模式（Philips标准）最常用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%B7%A6%E5%AF%B9%E9%BD%90%E6%A8%A1%E5%BC%8F%EF%BC%88Left-Justified%EF%BC%89"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. 左对齐模式（Left Justified）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%8F%B3%E5%AF%B9%E9%BD%90%E6%A8%A1%E5%BC%8F%EF%BC%88Right-Justified-Sony%E6%A0%BC%E5%BC%8F%EF%BC%89"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. 右对齐模式（Right Justified &#x2F; Sony格式）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-DSP-PCM-Mode"><span class="nav-number">1.3.4.</span> <span class="nav-text">4.DSP &#x2F; PCM Mode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-TDM-Mode"><span class="nav-number">1.3.5.</span> <span class="nav-text">5.TDM Mode</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E4%B8%BB%E4%BB%8E"><span class="nav-number">1.4.</span> <span class="nav-text">四、主从</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81I%C2%B2S-%E5%8F%AA%E4%BC%A0%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%EF%BC%8C%E4%B8%8D%E8%B4%9F%E8%B4%A3%E6%8E%A7%E5%88%B6"><span class="nav-number">1.5.</span> <span class="nav-text">六、I²S 只传音频数据，不负责控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%8D%8F%E8%AE%AE%E5%AF%B9%E6%AF%94"><span class="nav-number">1.6.</span> <span class="nav-text">其他协议对比</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="gb"
+      src="/images/20210404011504_4219e.png">
+  <p class="site-author-name" itemprop="name">gb</p>
+  <div class="site-description" itemprop="description">路漫漫其修远兮</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2025-07 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">gb</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">53k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">48 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
